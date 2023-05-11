@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 
     // 对这个函数的理解，sock是套接字，提供了一个接口，接口内网络层会经过一些处理，获取到要发送的server的IP和端口等信息
     // 然后这个地址信息会保存在存储serv_adr的地址中，因此17行代码的定义没有初始化的必要
-        sendto(sock, message, strlen(message), 0,  // 客户端将数据发送
+        sendto(sock, message, strlen(message), 0,  // 客户端将数据发送，同时获取地址
             (struct sockaddr*)&serv_adr, sizeof(serv_adr));
         adr_sz = sizeof(from_adr);
     // 对这个函数的理解，sock是套接字，提供了一个接口，接口内网络层会经过一些处理，获取到传输数据的server的IP和端口等信息
