@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/socket.h>
+#include <stdio.h>      // C语言标准IO
+#include <stdlib.h>     // C标准库的一个头文件，包含了一些常用函数，如动态内存分配
+#include <string.h>     // 字符串相关的头文件
+#include <unistd.h>     // 提供了访问POSIX操作系统API的函数
+#include <arpa/inet.h>  // 该头文件提供了用于Internet地址族的一些函数
+#include <sys/socket.h> // 系统头文件，实现网络和套接字编程
 
 #define BUF_SIZE 1024
 void error_handling(char *message);
