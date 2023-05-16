@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
     if (argc != 3)
     {
         printf("Usage: %s <IP> <port>\n", argv[0]);
-        exit(1);
+        exit(1);    // exit(1)是一个终止程序的函数调用，它会立即停止程序的执行，并返回给操作系统一个退出码
     }
 
     sock = socket(PF_INET, SOCK_STREAM, 0);
