@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 
     // "rb"是以二进制模式打开文件并读取文件，此模式下文件内容将被当成普通字节流
     // 不会被翻译为特定的字节流
-    fp = fopen("/home/ping/代码目录/TCP-IP-Programming/优雅的断开套接字连接/send_file.txt", "rb");  
+    fp = fopen("/home/ping/代码目录/TCP-IP-Programming/3-优雅的断开套接字连接/send_file.txt", "rb");  
 
     serv_sock = socket(PF_INET, SOCK_STREAM, 0);
     if(serv_sock == -1)  error_handling("socket() error");
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
         write(clnt_sock, buf, BUF_SIZE);
     }
     
-    shutdown(clnt_sock, SHUT_WR);
+    shutdown(clnt_sock, SHUT_WR);   // 半关闭的核心代码
     read(clnt_sock, buf, BUF_SIZE);
     printf("Message from client: %s \n", buf);
     fclose(fp);

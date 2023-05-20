@@ -27,7 +27,6 @@ int main(int argc, char* argv[])
 
     sock = socket(PF_INET, SOCK_STREAM, 0);
     if(sock == -1)  error_handling("socket() error");
-
     memset(&serv_adr, 0, sizeof(serv_adr)); // 填充0，初始化(不初始化会怎样？)
     serv_adr.sin_family = AF_INET;
     serv_adr.sin_addr.s_addr = inet_addr(argv[1]);
@@ -43,8 +42,10 @@ int main(int argc, char* argv[])
     puts("Received file data");
     
     write(sock, "Thank you", 10);   // 这是客户端发送的结尾的信息
+
     fclose(fp);
     close(sock);
+    
     return 0;
 }
 
