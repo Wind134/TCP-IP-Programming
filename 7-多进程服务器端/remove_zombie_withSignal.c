@@ -29,8 +29,14 @@ int main()
     if(pid == 0)
     {
         puts("Hi! I'm child process 1");
-        sleep(10);
-        return 12;
+        pid = fork();   
+        if (pid == 0)   puts("Hi! I'm the child of the child process 1");
+        else
+        {
+            printf("Child of the child proc id: %d \n", pid);
+            sleep(10);
+            return 12;
+        }
     }
     else    // 仅有父进程会执行这一段
     {
