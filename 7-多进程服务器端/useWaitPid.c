@@ -15,7 +15,9 @@ int main(int argc, char *argv[])
     }
     else
     {
-        while (!waitpid(-1, &status, WNOHANG))  // 有子进程，返回的是子进程的信息，子进程在执行的状态下则返回0
+        // 下面第一个参数设置为-1，表明可以等待任意子进程的终止
+        // 此外若有子进程，waitpid返回的是子进程的信息，子进程在执行的状态下则返回0
+        while (!waitpid(-1, &status, WNOHANG))  
         {
             sleep(3);   // 沉睡3s是为了防止等待的时间内一直打印下行信息
             puts("sleep 3 seconds.");

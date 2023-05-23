@@ -17,9 +17,10 @@ void keycontrol(int sig)
 
 int main()
 {
-    signal(SIGALRM, timeout);
-    signal(SIGINT, keycontrol);
-    alarm(2);   // 约定信号发生时间剩2s，仅针对SIGALRM
+    signal(SIGALRM, timeout);   // 这玩意儿会返回一个之前注册的函数指针(即timeout这个函数指针)
+    signal(SIGINT, keycontrol); // 同上，返回一个keycontrol函数指针，这两个函数指针都通过操作系统来使用
+    alarm(2);   // 约定信号发生时间剩2s，仅针对SIGALRM，到了时间操作系统将调用这个信号
+    // 以上的具体实现方案都由操作系统负责，具体实现暂且不必纠结
 
     // 接下来约定2s调用timout
     // 进入for循环之后，由于沉睡100s，在沉睡的过程中会出现timeout函数的调用
