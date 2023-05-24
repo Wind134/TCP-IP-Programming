@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 
             close(clnt_sock);
             puts("client disconnected...");
-            return 0;    
+            return 0;   // 子进程执行完毕就直接返回    
         }
         else    close(clnt_sock);   // 父进程啥也不干，就负责建立连接以及管理子进程以及销毁连接的客户端套接字
     }    
