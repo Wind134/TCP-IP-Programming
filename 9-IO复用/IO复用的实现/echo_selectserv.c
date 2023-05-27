@@ -14,6 +14,7 @@ int main(int argc, char* argv[])
 {
     int serv_sock, clnt_sock;
     char message[BUF_SIZE];
+    char buf[BUF_SIZE];
     fd_set reads, cpy_reads;
     struct sockaddr_in serv_adr, clnt_adr;
     struct timeval timeout;
@@ -44,7 +45,8 @@ int main(int argc, char* argv[])
     // 设置了对serv_sock套接字的监视
     // 同时客户端的连接请求同样通过传输数据完成(连接请求的套接字与数据传输的套接字不是同一个)
     // 因此服务器套接字中有接收的数据，就意味着有新的连接请求
-    FD_SET(serv_sock, &reads);   
+    FD_SET(serv_sock, &reads);
+    FD_SET(0, &reads);           // 对标准输入进行监视
     fd_max = serv_sock;          // 最大监视范围
 
     while(1)
@@ -62,6 +64,13 @@ int main(int argc, char* argv[])
         {
             if(FD_ISSET(i, &cpy_reads))    // 查找每一个状态发生变化的套接字描述符
             {
+                if (i == 0)     // 如果有输入，程序将其输出
+                {
+                    str_len = read(0, buf, BUF_SIZE);
+                    if (str_len == 0)   buf[BUF_SIZE] = 0;
+                    printf("\nMessage from console: %s", buf);
+                    if (!strcmp(buf, "q\n") || !strcmp(buf, "Q\n"))  error_handling("Normal quit");
+                }
                 if(i == serv_sock)  // 如果这个发生变化的套接字是服务器套接字，说明这时发生了连接请求
                 {
                     adr_sz = sizeof(clnt_adr);
