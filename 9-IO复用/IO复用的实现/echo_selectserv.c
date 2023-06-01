@@ -40,38 +40,43 @@ int main(int argc, char* argv[])
     
     if (listen(serv_sock, 5) == -1) error_handling("listen() error!");
 
-    FD_ZERO(&reads);
+    FD_ZERO(&reads);    // 清零，将所有fd_set数组设置为零
     
     // 设置了对serv_sock套接字的监视
     // 同时客户端的连接请求同样通过传输数据完成(连接请求的套接字与数据传输的套接字不是同一个)
     // 因此服务器套接字中有接收的数据，就意味着有新的连接请求
-    FD_SET(serv_sock, &reads);
-    FD_SET(0, &reads);           // 对标准输入进行监视
-    fd_max = serv_sock;          // 最大监视范围
+    FD_SET(serv_sock, &reads);  // 监视套接字描述符
+    FD_SET(0, &reads);          // 对标准输入(描述符为0)进行监视
+    fd_max = serv_sock;         // 最大监视范围
 
     while(1)
     {
-        cpy_reads = reads;      // 每次循环都将状态重置为初始状态
-        timeout.tv_sec = 5;
-        timeout.tv_usec = 5000;
+        cpy_reads = reads;      // 每次循环都将状态重置为初始状态，即监视套接字和标准输入描述符
+        timeout.tv_sec = 5;     // 设置超时监控，单位为秒
+        timeout.tv_usec = 5000; // 设置超时监控，单位为毫秒
 
-        // select执行失败，则退出循环
+        // select执行失败，则退出循环，超时以及返回描述符数目都是正常情况
         if((fd_num = select(fd_max + 1, &cpy_reads, 0, 0, &timeout)) == -1) break;
 
-        if(fd_num == 0) continue;   // 如果等待，则继续
+        if(fd_num == 0) continue;   // 如果超时，则继续循环
 
-        for (int i = 0; i < fd_max + 1; i++)
+        for (int i = 0; i < fd_max + 1; i++)    // 对监视范围内的每一个描述符进行处理
         {
             if(FD_ISSET(i, &cpy_reads))    // 查找每一个状态发生变化的套接字描述符
             {
-                if (i == 0)     // 如果有输入，程序将其输出
+                if (i == 0)     // 如果有输入，程序将其输出，这是针对标准输入的处理
                 {
                     str_len = read(0, buf, BUF_SIZE);
                     if (str_len == 0)   buf[BUF_SIZE] = 0;
                     printf("\nMessage from console: %s", buf);
                     if (!strcmp(buf, "q\n") || !strcmp(buf, "Q\n"))  error_handling("Normal quit");
                 }
-                if(i == serv_sock)  // 如果这个发生变化的套接字是服务器套接字，说明这时发生了连接请求
+                if(i == serv_sock)
+                /* 
+                 * 如果这个发生变化的套接字是服务器套接字，说明这时发生了
+                 * 连接请求，连接请求本质上也是客户端一串消息的传送，因此
+                 * 绑定read事件是合理的；
+                */
                 {
                     adr_sz = sizeof(clnt_adr);
 
@@ -83,7 +88,7 @@ int main(int argc, char* argv[])
                     // 因为后续数据传输通过这个套接字进行
                     FD_SET(clnt_sock, &reads);
 
-                    // 如果分配的套接字超过了之前的最大的描述文件符号，则更新fd_max
+                    // 如果分配的套接字超过了之前的最大的描述文件符号，则更新fd_max以正确处理监视范围
                     if(fd_max < clnt_sock)  fd_max = clnt_sock;
                     printf("Connected client %d \n", clnt_sock);
                 }
@@ -100,7 +105,7 @@ int main(int argc, char* argv[])
 
                     if(str_len == 0)
                     {
-                        FD_CLR(i, &reads);
+                        FD_CLR(i, &reads);  // 读完了，清除描述符的信息
                         close(i);   // 只要没关闭连接，while循环保证后面还是会读取到该客户端
                         printf("closed client: %d \n", i);
                     }
