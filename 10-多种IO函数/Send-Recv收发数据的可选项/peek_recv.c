@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
     printf("Buffering %d bytes: %s \n", str_len, buf);
 
     // 再次调用recv函数，未设置任何可选项，因此本次读取的数据将从输入缓冲中删除
-    str_len = recv(recv_sock, buf, sizeof(buf) - 1, MSG_PEEK | MSG_DONTWAIT);
+    str_len = recv(recv_sock, buf, sizeof(buf) - 1, 0);
     buf[str_len] = 0;
     printf("Read again: %s \n", buf);
     close(acpt_sock);
