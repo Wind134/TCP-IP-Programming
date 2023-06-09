@@ -17,7 +17,7 @@ int main(int argc, char * argv[])
         return -1;
     }
 
-    if(pthread_join(t_id, &thr_ret) != 0)   // pthread函数发挥作用，阻塞进程直到线程执行完毕，
+    if(pthread_join(t_id, &thr_ret) != 0)   // pthread函数发挥作用，阻塞进程直到线程执行完毕
     {
         puts("pthread_join() error");
         return -1;
