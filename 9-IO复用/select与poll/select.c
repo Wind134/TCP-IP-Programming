@@ -1,11 +1,12 @@
 /* 
  * 这个源码比较简单，仅仅是关注了一个文件描述符的一个监视项
- * 怎么同时关注到多个监视项，现在还有疑问
+ * 怎么同时关注到多个监视项呢，就是将这多个剪视频加入到位图fd_set
  */
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/select.h>
+#include <string.h>
 #define BUF_SIZE 30
 
 int main(int argc, char * argv[])
@@ -43,9 +44,11 @@ int main(int argc, char * argv[])
         {
             if (FD_ISSET(0, &temps))    // 验证发生变化的文件描述符是否为标准输入，若是，则读取数据并输出
             {
-                str_len = read(0, buf, BUF_SIZE);
+                str_len = read(0, buf, BUF_SIZE);   // 0是标准输入
                 buf[str_len] = 0;
                 printf("\nMessage from console: %s", buf);
+
+                if (strcmp(buf, "quit\n") == 0)   break;    // 输入quit就退出
             }   
         }
     }
