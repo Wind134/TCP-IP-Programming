@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <stdio.h>      // C语言标准IO
 #include <stdlib.h>     // C标准库的一个头文件，包含了一些常用函数，如动态内存分配
 #include <string.h>     // 字符串相关的头文件
@@ -59,18 +60,23 @@ int main(int argc, char* argv[])
     if(pid == 0)    // 子进程的任务
     {
         FILE *fp = fopen("/home/ping/echomsg.txt", "wt");    // 打开并截断式写入？
+        if (fp == NULL) {
+            printf("Failed to open file.\n");
+            return 1;
+        }
         char msgbuf[BUF_SIZE];  // 定义管道能处理的数据量？
         int len;
 
         for (int i = 0; i < 10; i++)
         {
             len = read(fds[0], msgbuf, BUF_SIZE);
+            printf("I am still here\n");
             fwrite((void*)msgbuf, 1, len, fp);  // 写入
+            fflush(fp);
         }
 
         fclose(fp);
 
-        sleep(10);
         return 0;
         
     }
@@ -109,7 +115,6 @@ int main(int argc, char* argv[])
 
             close(clnt_sock);
             puts("client disconnected...");
-            sleep(10);
             return 0;   // 子进程执行完毕就直接返回    
         }
         else
